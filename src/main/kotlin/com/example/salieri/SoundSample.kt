@@ -22,10 +22,15 @@ class SoundSample {
     fun process(outFile:File):Int?{
         val processing = SoundProcessing(file);
         val text = processing.toText()
+
         if(text.isNullOrEmpty()){
-            println("Unexpected error: You suck")
-            return 0;
+            throw RuntimeException("The file is empty! Try again with another one!")
         }
+
+        if(calculatedSize()>2){
+            throw RuntimeException("The file is too big! Limit - 2MB.")
+        }
+
         println(text);
         return processing.toMidi(text, outFile.name);
     }
@@ -33,4 +38,11 @@ class SoundSample {
     fun getFormat():Int {
         return MidiProcessing().getType(file)
     }
+
+    private fun calculatedSize():Double{
+        val fileSize = file.length()
+        val sizeInMb = fileSize / (1024.0 * 1024)
+        return sizeInMb;
+    }
+
 }
