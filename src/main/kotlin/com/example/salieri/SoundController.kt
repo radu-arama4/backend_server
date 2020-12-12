@@ -7,7 +7,7 @@ import org.springframework.web.multipart.MultipartFile
 import soundProcessing.SoundProcessing
 import java.io.File
 
-
+@CrossOrigin(origins = ["*"], allowedHeaders = ["*"])
 @RestController
 @RequestMapping("/sound", consumes = arrayOf(MediaType.ALL_VALUE))
 class SoundController{
