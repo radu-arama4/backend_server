@@ -2,14 +2,11 @@ package com.example.salieri
 
 import org.springframework.http.*
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.client.RestTemplate
 import org.springframework.web.multipart.MultipartFile
 import soundProcessing.SoundProcessing
 import java.io.File
-import org.springframework.util.LinkedMultiValueMap
-import java.lang.RuntimeException
-import org.springframework.util.MultiValueMap
-
-
+import java.util.*
 
 
 @CrossOrigin(origins = ["*"], allowedHeaders = ["*"])
@@ -27,18 +24,15 @@ class SoundController{
         val processingEngine = SoundProcessing(newFile);
         val midiText = processingEngine.toText() ?: return ResponseEntity("Bad text", HttpStatus.BAD_REQUEST)
 
-        println(midiText)
-
         val jsonData = "{\"generateLen\":\"2000\",\"source\":\"$midiText\"}"
-//        val responseData = RestTemplate().postForEntity(url, jsonData, String::class.java)
-//
-//
-//        val responseBuffer = responseData.body?: return ResponseEntity("Unexpected error while generating", HttpStatus.INTERNAL_SERVER_ERROR)
+        val responseData = RestTemplate().postForEntity(url, jsonData, String::class.java)
 
-        processingEngine.toMidi(midiText, "output")
 
-        val body: MultiValueMap<String, Any> = LinkedMultiValueMap()
-        body.add("file", File("output.mid"))
-        return ResponseEntity(body, HttpStatus.OK)
+        val responseBuffer = responseData.body?: return ResponseEntity("Unexpected error while generating",
+                                                                             HttpStatus.INTERNAL_SERVER_ERROR)
+
+        processingEngine.toMidi(responseBuffer, "output")
+        val outputFile = Base64.getEncoder().encodeToString(File("output.mid").readBytes())
+        return ResponseEntity(outputFile, HttpStatus.OK)
     }
 }
