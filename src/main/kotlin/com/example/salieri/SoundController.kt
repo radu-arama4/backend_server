@@ -22,14 +22,15 @@ class SoundController{
 
         file.transferTo(newFile);
         val processingEngine = SoundProcessing(newFile);
-        val midiText = processingEngine.toText() ?: return ResponseEntity("Bad text", HttpStatus.BAD_REQUEST)
-
+        val midiText = processingEngine.toText()
         val jsonData = "{\"generateLen\":\"2000\",\"source\":\"$midiText\"}"
-        val responseData = RestTemplate().postForEntity(url, jsonData, String::class.java)
 
+        println("Sending data to ML: this is source data\n$midiText\n")
+        val responseData = RestTemplate().postForEntity(url, jsonData, String::class.java)
 
         val responseBuffer = responseData.body?: return ResponseEntity("Unexpected error while generating",
                                                                              HttpStatus.INTERNAL_SERVER_ERROR)
+        println("Received from ML: this is received data\n$responseBuffer")
 
         processingEngine.toMidi(responseBuffer, "output")
         val outputFile = Base64.getEncoder().encodeToString(File("output.mid").readBytes())
