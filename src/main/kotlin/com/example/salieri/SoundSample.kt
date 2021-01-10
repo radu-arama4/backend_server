@@ -39,6 +39,7 @@ class SoundSample {
         val sizeInMb = fileSize / (1024.0 * 1024)
         return sizeInMb;
     }
+
 }
 
 fun textToIntString(source: String):String{
