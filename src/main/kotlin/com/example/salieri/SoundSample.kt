@@ -34,3 +34,15 @@ class SoundSample {
         return MidiProcessing().getType(file)
     }
 }
+
+fun textToIntString(source: String):String{
+    var result = ""
+    result += "[\"${source[0].toInt()}\"";
+    for(it in source){
+        result += ", \""
+        result += it.toInt().toString()
+        result += '"'
+    }
+    result+= ']'
+    return result
+}
