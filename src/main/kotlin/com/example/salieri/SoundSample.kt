@@ -33,6 +33,12 @@ class SoundSample {
     fun getFormat():Int {
         return MidiProcessing().getType(file)
     }
+
+    private fun calculatedSize():Double{
+        val fileSize = file.length()
+        val sizeInMb = fileSize / (1024.0 * 1024)
+        return sizeInMb;
+    }
 }
 
 fun textToIntString(source: String):String{
