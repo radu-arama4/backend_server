@@ -17,14 +17,15 @@ class SoundController{
     @PostMapping(consumes = [MediaType.MULTIPART_FORM_DATA_VALUE],
                  produces = [MediaType.APPLICATION_OCTET_STREAM_VALUE])
     fun postSoundProcessing(@RequestParam("file") file: MultipartFile): ResponseEntity<Any> {
-        val url = "http://localhost:5000/api/"
+
+        val url = "http://machine-learning-cluster-ip-service:5000/api/"
         val newFile = File(File("sample.mid").absolutePath)
 
         file.transferTo(newFile);
         val processingEngine = SoundProcessing(newFile);
         val midiText = textToIntString(processingEngine.toText())
         val jsonData = "{\"generateLen\":\"2000\",\"source\":$midiText}"
-        println("Sending data to ML: this is source data\n$jsonData\n")
+        println("v2 Sending data to ML: this is source data\n$jsonData\n")
         val responseData = RestTemplate().postForEntity(url, jsonData, String::class.java)
         val responseBuffer = responseData.body?: return ResponseEntity("Unexpected error while generating",
                                                                              HttpStatus.INTERNAL_SERVER_ERROR)
